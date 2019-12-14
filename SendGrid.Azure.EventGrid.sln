@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29609.76
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7E05961A-4349-4216-B5B5-7F9EAD3A866B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendGrid.Azure.EventGrid", "SendGrid.Azure.EventGrid\SendGrid.Azure.EventGrid.csproj", "{1655C385-F30A-43AF-80ED-7FA72A232A39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SendGrid.Azure.EventGrid", "src\SendGrid.Azure.EventGrid\SendGrid.Azure.EventGrid.csproj", "{220B3F91-7994-4931-B665-CDAABB58FD2F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,16 +13,16 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1655C385-F30A-43AF-80ED-7FA72A232A39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1655C385-F30A-43AF-80ED-7FA72A232A39}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1655C385-F30A-43AF-80ED-7FA72A232A39}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1655C385-F30A-43AF-80ED-7FA72A232A39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{220B3F91-7994-4931-B665-CDAABB58FD2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{220B3F91-7994-4931-B665-CDAABB58FD2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{220B3F91-7994-4931-B665-CDAABB58FD2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{220B3F91-7994-4931-B665-CDAABB58FD2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{1655C385-F30A-43AF-80ED-7FA72A232A39} = {7E05961A-4349-4216-B5B5-7F9EAD3A866B}
+		{220B3F91-7994-4931-B665-CDAABB58FD2F} = {7E05961A-4349-4216-B5B5-7F9EAD3A866B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {149DD7B4-91D6-4007-9DB9-68D9900AFAB7}
