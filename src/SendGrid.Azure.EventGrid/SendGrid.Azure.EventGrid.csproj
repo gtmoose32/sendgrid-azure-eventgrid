@@ -2,6 +2,21 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Version>1.0.0-prelease1</Version>
+    <Authors>Marty Mathis</Authors>
+    <Company />
+    <Description>A library for .NET that maps Twilio SendGrid web hook events into EventGrid events and publishes them.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/gtmoose32/sendgrid-azure-eventgrid</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/gtmoose32/sendgrid-azure-eventgrid</RepositoryUrl>
+    <PackageTags>azure eventgrid sendgrid twilio event email</PackageTags>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReleaseNotes>Initial prerelease version</PackageReleaseNotes>
+    <PackageId>Moosesoft.SendGrid.Azure.EventGrid</PackageId>
+    <Product>Moosesoft.SendGrid.Azure.EventGrid</Product>
   </PropertyGroup>
 
   <ItemGroup>
