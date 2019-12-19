@@ -29,7 +29,7 @@ namespace SendGrid.Azure.EventGrid
             var events = _webhookParser.ParseEvents(sendGridEventsJson)
                 .Select(e => _buildSubject != null
                     ? e.ToEventGridEvent(_buildSubject(e))
-                    : e.ToEventGridEvent($"/events/{e.SgEventId}"))
+                    : e.ToEventGridEvent($"/sendgrid/events/{e.EventType}/{e.SgEventId}"))
                 .ToList();
 
             await _eventGridClient.PublishEventsWithHttpMessagesAsync(_topicHostName, events, cancellationToken: cancellationToken)

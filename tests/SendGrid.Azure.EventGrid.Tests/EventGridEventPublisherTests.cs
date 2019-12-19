@@ -2,6 +2,8 @@
 using Microsoft.Azure.EventGrid.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using Sendgrid.Webhooks.Events;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -39,7 +41,7 @@ namespace SendGrid.Azure.EventGrid.Tests
 
             //Assert
             await _eventGridClient.Received()
-                .PublishEventsWithHttpMessagesAsync(Arg.Is(TopicHostName), Arg.Is<IList<EventGridEvent>>(events => events.Count == 11))
+                .PublishEventsWithHttpMessagesAsync(Arg.Is(TopicHostName), Arg.Is<IList<EventGridEvent>>(events => ValidatePublishedEvents(events)))
                 .ConfigureAwait(false);
         }
 
@@ -57,8 +59,31 @@ namespace SendGrid.Azure.EventGrid.Tests
 
             //Assert
             await _eventGridClient.Received()
-                .PublishEventsWithHttpMessagesAsync(Arg.Is(TopicHostName), Arg.Is<IList<EventGridEvent>>(events => events.Count == 11))
+                .PublishEventsWithHttpMessagesAsync(
+                    Arg.Is(TopicHostName), 
+                    Arg.Is<IList<EventGridEvent>>(events =>  ValidatePublishedEvents(events, e => $"/sendgrid/events/{e.EventType}/{e.SgEventId}")))
                 .ConfigureAwait(false);
+        }
+
+        private static bool ValidatePublishedEvents(ICollection<EventGridEvent> events)
+            => ValidatePublishedEvents(events, e => $"/sendgrid/events/{e.EventType}/{e.SgEventId}");
+
+        private static bool ValidatePublishedEvents(ICollection<EventGridEvent> events, Func<WebhookEventBase, string> subjectBuilder)
+        {
+                if (events.Count != 11) return false;
+
+                foreach (var @event in events)
+                {
+                    if (@event.Data is WebhookEventBase webhookEvent &&
+                        @event.Subject.Equals(subjectBuilder(webhookEvent), StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    return false;
+                }
+
+                return true;
         }
     }
 }
