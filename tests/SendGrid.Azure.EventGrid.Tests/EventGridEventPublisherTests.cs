@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure.EventGrid;
 using Microsoft.Azure.EventGrid.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moosesoft.SendGrid.Azure.EventGrid;
 using NSubstitute;
 using Sendgrid.Webhooks.Events;
 using System;

@@ -6,8 +6,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SendGrid.Azure.EventGrid
+namespace Moosesoft.SendGrid.Azure.EventGrid
 {
+    /// <inheritdoc cref="IEventGridEventPublisher"/>
     public class EventGridEventPublisher : IEventGridEventPublisher
     {
         private readonly IEventGridClient _eventGridClient;
@@ -24,6 +25,7 @@ namespace SendGrid.Azure.EventGrid
 
         }
 
+        /// <inheritdoc cref="IEventGridEventPublisher"/>
         public async Task PublishEventsAsync(string sendGridEventsJson, CancellationToken cancellationToken = default)
         {
             var events = _webhookParser.ParseEvents(sendGridEventsJson)

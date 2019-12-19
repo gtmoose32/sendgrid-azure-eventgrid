@@ -1,6 +1,7 @@
 using AutoFixture;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moosesoft.SendGrid.Azure.EventGrid;
 using Sendgrid.Webhooks.Events;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
