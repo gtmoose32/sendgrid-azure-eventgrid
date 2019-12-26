@@ -20,12 +20,13 @@ namespace SendGrid.Azure.EventGrid.Tests
         private const string TopicHostName = "topic.host.com";
 
         private IEventGridClient _eventGridClient;
+        private IEventGridEventPublisher _sut;
 
         [TestInitialize]
         public void Init()
         {
             _eventGridClient = Substitute.For<IEventGridClient>();
-            
+            _sut = new EventGridEventPublisher(_eventGridClient, TopicHostName);
         }
 
         [TestMethod]
@@ -35,10 +36,8 @@ namespace SendGrid.Azure.EventGrid.Tests
             var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "SendGridEvents.json");
             var json = File.ReadAllText(path);
 
-            var sut = new EventGridEventPublisher(_eventGridClient, TopicHostName);
-
             //Act
-            await sut.PublishEventsAsync(json).ConfigureAwait(false);
+            await _sut.PublishEventsAsync(json).ConfigureAwait(false);
 
             //Assert
             await _eventGridClient.Received()
@@ -53,7 +52,7 @@ namespace SendGrid.Azure.EventGrid.Tests
             var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "SendGridEvents.json");
             var json = File.ReadAllText(path);
 
-            var sut = new EventGridEventPublisher(_eventGridClient, TopicHostName, e => $"/sendgrid/events/{e.EventType}/{e.SgEventId}");
+            var sut = new EventGridEventPublisher(_eventGridClient, TopicHostName);
 
             //Act
             await sut.PublishEventsAsync(json).ConfigureAwait(false);

@@ -1,5 +1,5 @@
 ﻿using Microsoft.Azure.EventGrid;
-using Sendgrid.Webhooks.Events;
+using Microsoft.Azure.EventGrid.Models;
 using Sendgrid.Webhooks.Service;
 using System;
 using System.Linq;
@@ -8,34 +8,48 @@ using System.Threading.Tasks;
 
 namespace Moosesoft.SendGrid.Azure.EventGrid
 {
-    /// <inheritdoc cref="IEventGridEventPublisher"/>
+    /// <summary>
+    /// Reads SendGrid events json posted to a webhook, converts them to <see cref="EventGridEvent"/> and publishes those events to a specified topic.
+    /// </summary>
     public class EventGridEventPublisher : IEventGridEventPublisher
     {
+        private readonly EventGridEventPublisherSettings _settings;
         private readonly IEventGridClient _eventGridClient;
         private readonly string _topicHostName;
-        private readonly Func<WebhookEventBase, string> _buildSubject;
         private readonly WebhookParser _webhookParser;
 
-        public EventGridEventPublisher(IEventGridClient eventGridClient, string topicHostName, Func<WebhookEventBase, string> buildSubject = null)
+        /// <summary>
+        /// Initialize a new instance of <see cref="EventGridEventPublisher"/>.
+        /// </summary>
+        /// <param name="eventGridClient">The client used to publish SendGrid events to an Azure EventGrid topic.</param>
+        /// <param name="topicHostName">The topic host name where events will be published.</param>
+        /// <param name="settings"></param>
+        public EventGridEventPublisher(
+            IEventGridClient eventGridClient,
+            string topicHostName,
+            EventGridEventPublisherSettings settings = null)
         {
-            _eventGridClient = eventGridClient;
-            _topicHostName = topicHostName;
-            _buildSubject = buildSubject;
+            _eventGridClient = eventGridClient ?? throw new ArgumentNullException(nameof(eventGridClient));
+            _topicHostName = topicHostName ?? throw new ArgumentNullException(nameof(topicHostName));
+            _settings = settings ?? EventGridEventPublisherSettings.Default;
             _webhookParser = new WebhookParser();
-
         }
 
         /// <inheritdoc cref="IEventGridEventPublisher"/>
-        public async Task PublishEventsAsync(string sendGridEventsJson, CancellationToken cancellationToken = default)
+        public Task PublishEventsAsync(string sendGridEventsJson) =>
+            PublishEventsAsync(sendGridEventsJson, CancellationToken.None);
+
+        /// <inheritdoc cref="IEventGridEventPublisher"/>
+        public Task PublishEventsAsync(string sendGridEventsJson, CancellationToken cancellationToken)
         {
             var events = _webhookParser.ParseEvents(sendGridEventsJson)
-                .Select(e => _buildSubject != null
-                    ? e.ToEventGridEvent(_buildSubject(e))
-                    : e.ToEventGridEvent($"/sendgrid/events/{e.EventType}/{e.SgEventId}"))
+                .Select(e => 
+                    e.ToEventGridEvent(
+                        _settings.EventSubjectBuilder(e), 
+                        _settings.EventTypeBuilder(e)))
                 .ToList();
 
-            await _eventGridClient.PublishEventsWithHttpMessagesAsync(_topicHostName, events, cancellationToken: cancellationToken)
-                .ConfigureAwait(false);
+            return _eventGridClient.PublishEventsWithHttpMessagesAsync(_topicHostName, events, cancellationToken: cancellationToken);
         }
     }
 }
