@@ -29,12 +29,16 @@ public class SendGridEventHandler : ISendGridEventHandler
     }
 
     [FunctionName("HandleSendGridEvents")]
-    public async Task<IActionResult> HandleAsync(
+    public async Task<IActionResult> HandleSendGridHttpRequestAsync(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
         HttpRequest request,
         ILogger log)
     {
-        var json = await new StreamReader(request.Body).ReadToEndAsync();
+        string json;
+        using (var reader = new StreamReader(request.Body))
+        {
+            json = await reader.ReadToEndAsync().ConfigureAwait(false); 
+        }
 
         log.LogInformation(json);
 
