@@ -19,6 +19,7 @@ namespace SendGrid.Azure.EventGrid.Tests
     {
         private const string TopicHostName = "topic.host.com";
 
+        private readonly EventGridEventPublisherSettings _defaultSettings = EventGridEventPublisherSettings.Default;
         private IEventGridClient _eventGridClient;
         private IEventGridEventPublisher _sut;
 
@@ -41,18 +42,24 @@ namespace SendGrid.Azure.EventGrid.Tests
 
             //Assert
             await _eventGridClient.Received()
-                .PublishEventsWithHttpMessagesAsync(Arg.Is(TopicHostName), Arg.Is<IList<EventGridEvent>>(events => ValidatePublishedEvents(events)))
+                .PublishEventsWithHttpMessagesAsync(Arg.Is(TopicHostName), Arg.Is<IList<EventGridEvent>>(events => ValidatePublishedEvents(events, _defaultSettings)))
                 .ConfigureAwait(false);
         }
 
         [TestMethod]
-        public async Task PublishEventsAsync_WithSubjectBuilder_Test()
+        public async Task PublishEventsAsync_WithCustomBuilders_Test()
         {
             //Arrange 
             var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "SendGridEvents.json");
             var json = File.ReadAllText(path);
 
-            var sut = new EventGridEventPublisher(_eventGridClient, TopicHostName);
+            var settings = new EventGridEventPublisherSettings
+            {
+                EventSubjectBuilder = e => $"/my/custom/subject/{e.SgEventId}",
+                EventTypeBuilder = e => $"CustomEventType.{e.EventType}"
+            };
+
+            var sut = new EventGridEventPublisher(_eventGridClient, TopicHostName, settings);
 
             //Act
             await sut.PublishEventsAsync(json).ConfigureAwait(false);
@@ -60,30 +67,30 @@ namespace SendGrid.Azure.EventGrid.Tests
             //Assert
             await _eventGridClient.Received()
                 .PublishEventsWithHttpMessagesAsync(
-                    Arg.Is(TopicHostName), 
-                    Arg.Is<IList<EventGridEvent>>(events =>  ValidatePublishedEvents(events, e => $"/sendgrid/events/{e.EventType}/{e.SgEventId}")))
+                    Arg.Is(TopicHostName),
+                    Arg.Is<IList<EventGridEvent>>(events => ValidatePublishedEvents(events, settings)))
                 .ConfigureAwait(false);
         }
 
-        private static bool ValidatePublishedEvents(ICollection<EventGridEvent> events)
-            => ValidatePublishedEvents(events, e => $"/sendgrid/events/{e.EventType}/{e.SgEventId}");
-
-        private static bool ValidatePublishedEvents(ICollection<EventGridEvent> events, Func<WebhookEventBase, string> subjectBuilder)
+        private static bool ValidatePublishedEvents(
+            ICollection<EventGridEvent> events,
+            EventGridEventPublisherSettings settings)
         {
-                if (events.Count != 11) return false;
+            if (events.Count != 11) return false;
 
-                foreach (var @event in events)
+            foreach (var @event in events)
+            {
+                if (@event.Data is WebhookEventBase webhookEvent &&
+                    @event.Subject.Equals(settings.EventSubjectBuilder(webhookEvent), StringComparison.OrdinalIgnoreCase) &&
+                    @event.EventType.Equals(settings.EventTypeBuilder(webhookEvent), StringComparison.OrdinalIgnoreCase))
                 {
-                    if (@event.Data is WebhookEventBase webhookEvent &&
-                        @event.Subject.Equals(subjectBuilder(webhookEvent), StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
-                    return false;
+                    continue;
                 }
 
-                return true;
+                return false;
+            }
+
+            return true;
         }
     }
 }
