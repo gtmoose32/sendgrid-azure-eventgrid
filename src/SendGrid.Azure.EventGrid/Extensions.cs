@@ -9,7 +9,7 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
         public static EventGridEvent ToEventGridEvent(this WebhookEventBase @event, string subject, string eventType)
         {
             return new EventGridEvent(
-                Guid.NewGuid().ToString(),
+                @event.SgEventId,
                 subject,
                 @event,
                 eventType,
