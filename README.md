@@ -1,5 +1,5 @@
 # Moosesoft.SendGrid.Azure.EventGrid
-[![nuget](https://img.shields.io/nuget/v/Moosesoft.SendGrid.Azure.EventGrid.svg)](https://www.nuget.org/packages/Moosesoft.SendGrid.Azure.EventGrid/)
+[![Build status](https://dev.azure.com/gtmoose/Mathis%20Home/_apis/build/status/SendGrid.Azure.EventGrid%20-%20CICD)](https://dev.azure.com/gtmoose/Mathis%20Home/_build/latest?definitionId=9)[![nuget](https://img.shields.io/nuget/v/Moosesoft.SendGrid.Azure.EventGrid.svg)](https://www.nuget.org/packages/Moosesoft.SendGrid.Azure.EventGrid/)
 
 ## What is it?
 A library for .NET that converts Twilio SendGrid web hook events into [EventGrid](https://azure.microsoft.com/en-us/services/event-grid/) events and publishes them to a topic hosted in [Microsoft Azure](https://azure.microsoft.com/).
