@@ -41,9 +41,9 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
         public static EventGridEventPublisherSettings Default => 
             new EventGridEventPublisherSettings(BuildEventType, BuildEventSubject);
 
-        private static string BuildEventType(WebhookEventBase @event) => $"SendGrid.{@event.EventType}";
+        private static string BuildEventType(WebhookEventBase @event) => $"Twilio.SendGrid.{@event.EventType}";
 
         private static string BuildEventSubject(WebhookEventBase @event) =>
-            $"/sendgrid/events/{@event.EventType}/{@event.SgEventId}";
+            $"/sendgrid/messages/{@event.SgMessageId}";
     }
 }
