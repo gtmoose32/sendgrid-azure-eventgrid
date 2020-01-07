@@ -81,6 +81,7 @@ namespace SendGrid.Azure.EventGrid.Tests
             foreach (var @event in events)
             {
                 if (@event.Data is WebhookEventBase webhookEvent &&
+                    @event.Id.Equals(webhookEvent.SgEventId, StringComparison.OrdinalIgnoreCase) &&
                     @event.Subject.Equals(settings.EventSubjectBuilder(webhookEvent), StringComparison.OrdinalIgnoreCase) &&
                     @event.EventType.Equals(settings.EventTypeBuilder(webhookEvent), StringComparison.OrdinalIgnoreCase))
                 {
