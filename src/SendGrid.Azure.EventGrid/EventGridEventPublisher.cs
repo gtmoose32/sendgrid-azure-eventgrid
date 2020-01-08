@@ -36,11 +36,7 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
         }
 
         /// <inheritdoc cref="IEventGridEventPublisher"/>
-        public Task PublishEventsAsync(string sendGridEventsJson) =>
-            PublishEventsAsync(sendGridEventsJson, CancellationToken.None);
-
-        /// <inheritdoc cref="IEventGridEventPublisher"/>
-        public Task PublishEventsAsync(string sendGridEventsJson, CancellationToken cancellationToken)
+        public Task PublishEventsAsync(string sendGridEventsJson, CancellationToken cancellationToken = default)
         {
             var events = _webhookParser.ParseEvents(sendGridEventsJson)
                 .Select(e => 

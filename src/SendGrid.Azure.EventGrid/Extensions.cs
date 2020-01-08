@@ -6,15 +6,13 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
 {
     internal static class Extensions
     {
-        public static EventGridEvent ToEventGridEvent(this WebhookEventBase @event, string subject, string eventType)
-        {
-            return new EventGridEvent(
+        public static EventGridEvent ToEventGridEvent(this WebhookEventBase @event, string subject, string eventType) =>
+            new EventGridEvent(
                 @event.SgEventId,
                 subject,
                 @event,
                 eventType,
                 DateTime.UtcNow,
                 "1");
-        }
     }
 }

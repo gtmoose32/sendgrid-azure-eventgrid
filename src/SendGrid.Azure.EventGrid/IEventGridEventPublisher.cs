@@ -12,15 +12,8 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
         /// Reads raw json SendGrid events and publishes them as Azure EventGrid events to a specified topic endpoint.
         /// </summary>
         /// <param name="sendGridEventsJson">Raw json events received from SendGrid.</param>
-        /// <returns>The <see cref="Task"/> returned which can be awaited.</returns>
-        Task PublishEventsAsync(string sendGridEventsJson);
-
-        /// <summary>
-        /// Reads raw json SendGrid events and publishes them as Azure EventGrid events to a specified topic endpoint.
-        /// </summary>
-        /// <param name="sendGridEventsJson">Raw json events received from SendGrid.</param>
         /// <param name="cancellationToken">Cancellation token used to cancel the operation.</param>
         /// <returns>The <see cref="Task"/> returned which can be awaited.</returns>
-        Task PublishEventsAsync(string sendGridEventsJson, CancellationToken cancellationToken);
+        Task PublishEventsAsync(string sendGridEventsJson, CancellationToken cancellationToken = default);
     }
 }
