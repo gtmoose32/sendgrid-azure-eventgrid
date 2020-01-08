@@ -9,7 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SendGrid.Azure.EventGrid", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C0B8D7FA-70FA-4108-8A8D-0C14C73D80FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendGrid.Azure.EventGrid.Tests", "tests\SendGrid.Azure.EventGrid.Tests\SendGrid.Azure.EventGrid.Tests.csproj", "{0C4D527B-62A5-43E8-9EBF-E9D36A78C99C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SendGrid.Azure.EventGrid.Tests", "tests\SendGrid.Azure.EventGrid.Tests\SendGrid.Azure.EventGrid.Tests.csproj", "{0C4D527B-62A5-43E8-9EBF-E9D36A78C99C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{74EEE351-F1FB-45F4-8F4E-B69C061A5AB8}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
