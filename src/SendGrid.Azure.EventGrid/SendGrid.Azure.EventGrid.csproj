@@ -6,7 +6,7 @@
     <Version>2.0.0-prerelease1</Version>
     <Authors>Marty Mathis</Authors>
     <Company />
-    <Description>A library for .NET that converts Twilio SendGrid web hook events into EventGrid events and publishes them to a topic.</Description>
+    <Description>A library for .NET that converts Twilio SendGrid web hook events into EventGrid events.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/gtmoose32/sendgrid-azure-eventgrid</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
@@ -15,7 +15,12 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile Condition="'$(Configuration)'=='Release'">bin\Release\netstandard2.0\Moosesoft.SendGrid.Azure.EventGrid.xml</DocumentationFile>
-    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
+    <PackageReleaseNotes>
+Changes in 2.0.0
+* Changed default EventGrid event type and subject.
+* Add support for custom EventGrid event type and subject via settings.
+* Changed EventGrid event id to mirror the event id coming from SendGrid.
+    </PackageReleaseNotes>
     <Product>Moosesoft.SendGrid.Azure.EventGrid</Product>
     <AssemblyName>Moosesoft.SendGrid.Azure.EventGrid</AssemblyName>
     <RootNamespace>Moosesoft.SendGrid.Azure.EventGrid</RootNamespace>
