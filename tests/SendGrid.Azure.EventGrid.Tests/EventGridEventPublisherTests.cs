@@ -53,11 +53,9 @@ namespace SendGrid.Azure.EventGrid.Tests
             var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "SendGridEvents.json");
             var json = File.ReadAllText(path);
 
-            var settings = new EventGridEventPublisherSettings
-            {
-                EventSubjectBuilder = e => $"/my/custom/subject/{e.SgEventId}",
-                EventTypeBuilder = e => $"CustomEventType.{e.EventType}"
-            };
+            var settings = new EventGridEventPublisherSettings(
+                e => $"/my/custom/subject/{e.SgEventId}",
+                e => $"CustomEventType.{e.EventType}");
 
             var sut = new EventGridEventPublisher(_eventGridClient, TopicHostName, settings);
 
