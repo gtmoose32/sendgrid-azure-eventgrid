@@ -23,7 +23,7 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
         /// </summary>
         /// <param name="eventGridClient">The client used to publish SendGrid events to an Azure EventGrid topic.</param>
         /// <param name="topicHostName">The topic host name where events will be published.</param>
-        /// <param name="settings"></param>
+        /// <param name="settings">Settings used to help build an <see cref="EventGridEvent"/>.</param>
         public EventGridEventPublisher(
             IEventGridClient eventGridClient,
             string topicHostName,
