@@ -6,7 +6,8 @@
     "event": "processed",
     "category": "cat facts",
     "sg_event_id": "sg_event_id",
-    "sg_message_id": "sg_message_id"
+    "sg_message_id": "sg_message_id",
+    "custom_arg1":  "test!" 
   },
   {
     "email": "example@test.com",
@@ -17,7 +18,8 @@
     "sg_event_id": "sg_event_id",
     "sg_message_id": "sg_message_id",
     "response": "400 try again later",
-    "attempt": "5"
+    "attempt": "5",
+    "custom_arg1": "test!"
   },
   {
     "email": "example@test.com",
@@ -27,7 +29,8 @@
     "category": "cat facts",
     "sg_event_id": "sg_event_id",
     "sg_message_id": "sg_message_id",
-    "response": "250 OK"
+    "response": "250 OK",
+    "custom_arg1": "test!"
   },
   {
     "email": "example@test.com",
@@ -38,7 +41,8 @@
     "sg_event_id": "sg_event_id",
     "sg_message_id": "sg_message_id",
     "useragent": "Mozilla/4.0 (compatible; MSIE 6.1; Windows XP; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
-    "ip": "255.255.255.255"
+    "ip": "255.255.255.255",
+    "custom_arg1": "test!"
   },
   {
     "email": "example@test.com",
@@ -50,7 +54,8 @@
     "sg_message_id": "sg_message_id",
     "useragent": "Mozilla/4.0 (compatible; MSIE 6.1; Windows XP; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
     "ip": "255.255.255.255",
-    "url": "http://www.sendgrid.com/"
+    "url": "http://www.sendgrid.com/",
+    "custom_arg1": "test!"
   },
   {
     "email": "example@test.com",
@@ -61,7 +66,8 @@
     "sg_event_id": "sg_event_id",
     "sg_message_id": "sg_message_id",
     "reason": "500 unknown recipient",
-    "status": "5.0.0"
+    "status": "5.0.0",
+    "custom_arg1": "test!"
   },
   {
     "email": "example@test.com",
@@ -72,7 +78,8 @@
     "sg_event_id": "sg_event_id",
     "sg_message_id": "sg_message_id",
     "reason": "Bounced Address",
-    "status": "5.0.0"
+    "status": "5.0.0",
+    "custom_arg1": "test!"
   },
   {
     "email": "example@test.com",
@@ -81,7 +88,8 @@
     "event": "spamreport",
     "category": "cat facts",
     "sg_event_id": "sg_event_id",
-    "sg_message_id": "sg_message_id"
+    "sg_message_id": "sg_message_id",
+    "custom_arg1": "test!"
   },
   {
     "email": "example@test.com",
@@ -90,7 +98,8 @@
     "event": "unsubscribe",
     "category": "cat facts",
     "sg_event_id": "sg_event_id",
-    "sg_message_id": "sg_message_id"
+    "sg_message_id": "sg_message_id",
+    "custom_arg1": "test!"
   },
   {
     "email": "example@test.com",
@@ -103,7 +112,8 @@
     "useragent": "Mozilla/4.0 (compatible; MSIE 6.1; Windows XP; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
     "ip": "255.255.255.255",
     "url": "http://www.sendgrid.com/",
-    "asm_group_id": 10
+    "asm_group_id": 10,
+    "custom_arg1": "test!"
   },
   {
     "email": "example@test.com",
@@ -116,6 +126,7 @@
     "useragent": "Mozilla/4.0 (compatible; MSIE 6.1; Windows XP; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
     "ip": "000.000.000.000",
     "url": "http://www.sendgrid.com/",
-    "asm_group_id": 10
+    "asm_group_id": 10,
+    "custom_arg1": "test!"
   }
 ]

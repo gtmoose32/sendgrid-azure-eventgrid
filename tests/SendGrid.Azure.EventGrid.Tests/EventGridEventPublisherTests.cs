@@ -81,7 +81,9 @@ namespace SendGrid.Azure.EventGrid.Tests
                 if (@event.Data is WebhookEventBase webhookEvent &&
                     @event.Id.Equals(webhookEvent.SgEventId, StringComparison.OrdinalIgnoreCase) &&
                     @event.Subject.Equals(settings.EventSubjectBuilder(webhookEvent), StringComparison.OrdinalIgnoreCase) &&
-                    @event.EventType.Equals(settings.EventTypeBuilder(webhookEvent), StringComparison.OrdinalIgnoreCase))
+                    @event.EventType.Equals(settings.EventTypeBuilder(webhookEvent), StringComparison.OrdinalIgnoreCase) &&
+                    webhookEvent.UniqueParameters.Count == 1 &&
+                    webhookEvent.UniqueParameters.ContainsKey("custom_arg1")) 
                 {
                     continue;
                 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.EventGrid;
 using Microsoft.Azure.EventGrid.Models;
+using Newtonsoft.Json;
 using Sendgrid.Webhooks.Service;
 using System;
 using System.Linq;
@@ -32,7 +33,8 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
             _eventGridClient = eventGridClient ?? throw new ArgumentNullException(nameof(eventGridClient));
             _topicHostName = topicHostName ?? throw new ArgumentNullException(nameof(topicHostName));
             _settings = settings ?? EventGridEventPublisherSettings.Default;
-            _webhookParser = new WebhookParser();
+            //_webhookParser = new WebhookParser();
+            _webhookParser = new WebhookParser(new JsonConverter[] { new CaseInsensitiveWebhookJsonConverter() });
         }
 
         /// <inheritdoc cref="IEventGridEventPublisher"/>
