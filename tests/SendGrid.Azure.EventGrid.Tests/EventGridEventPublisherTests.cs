@@ -1,9 +1,10 @@
-﻿using Microsoft.Azure.EventGrid;
+﻿using FluentAssertions;
+using Microsoft.Azure.EventGrid;
 using Microsoft.Azure.EventGrid.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moosesoft.SendGrid.Azure.EventGrid;
+using Newtonsoft.Json.Linq;
 using NSubstitute;
-using Sendgrid.Webhooks.Events;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -17,7 +18,7 @@ namespace SendGrid.Azure.EventGrid.Tests
     [TestClass]
     public class EventGridEventPublisherTests
     {
-        private const string TopicHostName = "topic.host.com";
+        private readonly Uri _topicUri = new Uri("https://topic.host.com/api/events");
 
         private readonly EventGridEventPublisherSettings _defaultSettings = EventGridEventPublisherSettings.Default;
         private IEventGridClient _eventGridClient;
@@ -27,7 +28,7 @@ namespace SendGrid.Azure.EventGrid.Tests
         public void Init()
         {
             _eventGridClient = Substitute.For<IEventGridClient>();
-            _sut = new EventGridEventPublisher(_eventGridClient, TopicHostName);
+            _sut = new EventGridEventPublisher(_eventGridClient, _topicUri);
         }
 
         [TestMethod]
@@ -42,7 +43,38 @@ namespace SendGrid.Azure.EventGrid.Tests
 
             //Assert
             await _eventGridClient.Received()
-                .PublishEventsWithHttpMessagesAsync(Arg.Is(TopicHostName), Arg.Is<IList<EventGridEvent>>(events => ValidatePublishedEvents(events, _defaultSettings)))
+                .PublishEventsWithHttpMessagesAsync(Arg.Is(_topicUri.Host), Arg.Is<IList<EventGridEvent>>(events => ValidatePublishedEvents(events, _defaultSettings)))
+                .ConfigureAwait(false);
+        }
+
+        [TestMethod]
+        public async Task PublishEventsAsync_ReceivedNullJson_Test()
+        {
+            //Act
+            Func<Task> act = () => _sut.PublishEventsAsync(null);
+
+            //Assert
+            act.Should()
+                .ThrowExactly<ArgumentException>()
+                .WithMessage("Events json cannot be null, empty or whitespace*");
+
+            await _eventGridClient.DidNotReceiveWithAnyArgs()
+                .PublishEventsWithHttpMessagesAsync(Arg.Any<string>(), Arg.Any<IList<EventGridEvent>>())
+                .ConfigureAwait(false);
+        }
+
+        [TestMethod]
+        public async Task PublishEventsAsync_ReceivedEmptyJsonArray_Test()
+        {
+            //Arrange 
+            var json = "[]";
+
+            //Act
+            await _sut.PublishEventsAsync(json).ConfigureAwait(false);
+
+            //Assert
+            await _eventGridClient.DidNotReceiveWithAnyArgs()
+                .PublishEventsWithHttpMessagesAsync(Arg.Any<string>(), Arg.Any<IList<EventGridEvent>>())
                 .ConfigureAwait(false);
         }
 
@@ -54,10 +86,10 @@ namespace SendGrid.Azure.EventGrid.Tests
             var json = File.ReadAllText(path);
 
             var settings = new EventGridEventPublisherSettings(
-                e => $"/my/custom/subject/{e.SgEventId}",
-                e => $"CustomEventType.{e.EventType}");
+                j => $"/my/custom/subject/{j["sg_event_id"].Value<string>()}",
+                j => $"CustomEventType.{j["event"].Value<string>()}");
 
-            var sut = new EventGridEventPublisher(_eventGridClient, TopicHostName, settings);
+            var sut = new EventGridEventPublisher(_eventGridClient, _topicUri, settings);
 
             //Act
             await sut.PublishEventsAsync(json).ConfigureAwait(false);
@@ -65,7 +97,7 @@ namespace SendGrid.Azure.EventGrid.Tests
             //Assert
             await _eventGridClient.Received()
                 .PublishEventsWithHttpMessagesAsync(
-                    Arg.Is(TopicHostName),
+                    Arg.Is(_topicUri.Host),
                     Arg.Is<IList<EventGridEvent>>(events => ValidatePublishedEvents(events, settings)))
                 .ConfigureAwait(false);
         }
@@ -78,12 +110,11 @@ namespace SendGrid.Azure.EventGrid.Tests
 
             foreach (var @event in events)
             {
-                if (@event.Data is WebhookEventBase webhookEvent &&
-                    @event.Id.Equals(webhookEvent.SgEventId, StringComparison.OrdinalIgnoreCase) &&
-                    @event.Subject.Equals(settings.EventSubjectBuilder(webhookEvent), StringComparison.OrdinalIgnoreCase) &&
-                    @event.EventType.Equals(settings.EventTypeBuilder(webhookEvent), StringComparison.OrdinalIgnoreCase) &&
-                    webhookEvent.UniqueParameters.Count == 1 &&
-                    webhookEvent.UniqueParameters.ContainsKey("custom_arg1")) 
+                if (@event.Data is JObject json &&
+                    @event.Id.Equals(json["sg_event_id"].Value<string>(), StringComparison.OrdinalIgnoreCase) &&
+                    @event.Subject.Equals(settings.BuildEventSubject(json), StringComparison.OrdinalIgnoreCase) &&
+                    @event.EventType.Equals(settings.BuildEventType(json), StringComparison.OrdinalIgnoreCase) &&
+                    json["custom_arg1"].Value<string>().Equals("test!"))
                 {
                     continue;
                 }
