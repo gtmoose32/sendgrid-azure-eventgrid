@@ -41,20 +41,10 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
         public static EventGridEventPublisherSettings Default => 
             new EventGridEventPublisherSettings(DefaultBuildEventType, DefaultBuildEventSubject);
 
-        private static string DefaultBuildEventType(JObject sendGridEvent)
-        {
-            if (!sendGridEvent.TryGetValue(EventTypeKey, StringComparison.OrdinalIgnoreCase, out var eventType))
-                throw EventTypeKey.CreateInvalidOperationException();
+        private static string DefaultBuildEventType(JObject sendGridEvent) =>
+            $"Twilio.SendGrid.{sendGridEvent.GetPropertyStringValue(EventTypeKey)}";
 
-            return $"Twilio.SendGrid.{eventType}";
-        }
-
-        private static string DefaultBuildEventSubject(JObject sendGridEvent)
-        {
-            if (!sendGridEvent.TryGetValue(MessageIdKey, StringComparison.OrdinalIgnoreCase, out var messageId))
-                throw MessageIdKey.CreateInvalidOperationException();
-
-            return $"/sendgrid/messages/{messageId}";
-        }
+        private static string DefaultBuildEventSubject(JObject sendGridEvent) =>
+            $"/sendgrid/messages/{sendGridEvent.GetPropertyStringValue(MessageIdKey)}";
     }
 }

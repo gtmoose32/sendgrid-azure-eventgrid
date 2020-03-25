@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <Version>2.0.1</Version>
+    <Version>3.0.0</Version>
     <Authors>Marty Mathis</Authors>
     <Company />
     <Description>A library for .NET that converts Twilio SendGrid web hook events into EventGrid events.</Description>
@@ -16,10 +16,10 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile Condition="'$(Configuration)'=='Release'">bin\Release\netstandard2.0\Moosesoft.SendGrid.Azure.EventGrid.xml</DocumentationFile>
     <PackageReleaseNotes>
-Changes in 2.0.1
-* Added new custom JsonConverter -> CaseInsensitiveWebhookJsonConverter
-* Support for deserializing events in a case insensitive way.
-* Added addtional SendGrid known properties so they get excluded from unique arguments.
+Changes in 3.0.0
+* Removed dependency on SendGrid.Webhooks package.
+* Modified EventGridEventPublisher ctor to use a Uri instead of a string for EventGrid topic.  The full EventGrid topic endpoint should be passed into this arugment.
+* Modified EventGridEventPublisherSettings ctor to accept different custom builder funcs based on JObject instead of SendGrid.Webhooks objects.
     </PackageReleaseNotes>
     <Product>Moosesoft.SendGrid.Azure.EventGrid</Product>
     <AssemblyName>Moosesoft.SendGrid.Azure.EventGrid</AssemblyName>
@@ -28,7 +28,6 @@ Changes in 2.0.1
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.EventGrid" Version="3.2.0" />
-    <PackageReference Include="Sendgrid.Webhooks" Version="2.0.0" />
   </ItemGroup>
 
 </Project>

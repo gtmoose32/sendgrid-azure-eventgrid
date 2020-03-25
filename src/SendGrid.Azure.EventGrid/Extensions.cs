@@ -9,22 +9,22 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
         private const string InvalidOperationExceptionMessageTemplate = "'{0}' property cannot be extracted from the SendGrid event json.";
         private const string EventIdKey = "sg_event_id";
 
-        public static EventGridEvent ToEventGridEvent(this JObject @event, EventGridEventPublisherSettings settings)
-        {
-            if (!@event.TryGetValue(EventIdKey, StringComparison.OrdinalIgnoreCase, out var eventId))
-                throw EventIdKey.CreateInvalidOperationException();
-
-            return new EventGridEvent(
-                eventId.Value<string>(),
+        public static EventGridEvent ToEventGridEvent(this JObject @event, EventGridEventPublisherSettings settings) =>
+            new EventGridEvent(
+                @event.GetPropertyStringValue(EventIdKey),
                 settings.BuildEventSubject(@event),
                 @event,
                 settings.BuildEventType(@event),
                 DateTime.UtcNow,
                 "1");
+
+        public static string GetPropertyStringValue(this JObject json, string propertyName)
+        {
+            if (!json.TryGetValue(EventIdKey, StringComparison.OrdinalIgnoreCase, out var token))
+                throw new InvalidOperationException(
+                    string.Format(InvalidOperationExceptionMessageTemplate, propertyName));
+
+            return token.Value<string>();
         }
-
-        public static InvalidOperationException CreateInvalidOperationException(this string jobjectKey) =>
-            new InvalidOperationException(string.Format(InvalidOperationExceptionMessageTemplate, jobjectKey));
-
     }
 }
