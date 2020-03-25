@@ -1,5 +1,5 @@
 ﻿using Microsoft.Azure.EventGrid.Models;
-using Sendgrid.Webhooks.Events;
+using Newtonsoft.Json.Linq;
 using System;
 
 namespace Moosesoft.SendGrid.Azure.EventGrid
@@ -9,35 +9,52 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
     /// </summary>
     public class EventGridEventPublisherSettings
     {
+        private const string EventTypeKey = "event";
+        private const string MessageIdKey = "sg_message_id";
+
         /// <summary>
         /// Initializes a new instance of <see cref="EventGridEventPublisherSettings"/>.
         /// </summary>
         /// <param name="eventTypeBuilder">Custom func used to build EventGrid event type.</param>
         /// <param name="eventSubjectBuilder">Custom func used to build EventGrid event subject.</param>
         public EventGridEventPublisherSettings(
-            Func<WebhookEventBase, string> eventTypeBuilder, 
-            Func<WebhookEventBase, string> eventSubjectBuilder)
+            Func<JObject, string> eventTypeBuilder, 
+            Func<JObject, string> eventSubjectBuilder)
         {
-            EventTypeBuilder = eventTypeBuilder ?? throw new ArgumentNullException(nameof(eventTypeBuilder));
-            EventSubjectBuilder = eventSubjectBuilder ?? throw new ArgumentNullException(nameof(eventSubjectBuilder));
+            BuildEventType = eventTypeBuilder ?? throw new ArgumentNullException(nameof(eventTypeBuilder));
+            BuildEventSubject = eventSubjectBuilder ?? throw new ArgumentNullException(nameof(eventSubjectBuilder));
         }
 
         /// <summary>
         /// Delegate used to build the event type for an <see cref="EventGridEvent"/>.
         /// </summary>
-        public Func<WebhookEventBase, string> EventTypeBuilder { get; }
+        public Func<JObject, string> BuildEventType { get; }
 
         /// <summary>
         /// Delegate used to build the event subject for an <see cref="EventGridEvent"/>.
         /// </summary>
-        public Func<WebhookEventBase, string> EventSubjectBuilder { get; }
+        public Func<JObject, string> BuildEventSubject { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="EventGridEventPublisherSettings"/> with default settings.
         /// </summary>
         public static EventGridEventPublisherSettings Default => 
-            new EventGridEventPublisherSettings(
-                e => $"Twilio.SendGrid.{e.EventType}", 
-                e => $"/sendgrid/messages/{e.SgMessageId}");
+            new EventGridEventPublisherSettings(DefaultBuildEventType, DefaultBuildEventSubject);
+
+        private static string DefaultBuildEventType(JObject sendGridEvent)
+        {
+            if (!sendGridEvent.TryGetValue(EventTypeKey, StringComparison.OrdinalIgnoreCase, out var eventType))
+                throw EventTypeKey.CreateInvalidOperationException();
+
+            return $"Twilio.SendGrid.{eventType}";
+        }
+
+        private static string DefaultBuildEventSubject(JObject sendGridEvent)
+        {
+            if (!sendGridEvent.TryGetValue(MessageIdKey, StringComparison.OrdinalIgnoreCase, out var messageId))
+                throw MessageIdKey.CreateInvalidOperationException();
+
+            return $"/sendgrid/messages/{messageId}";
+        }
     }
 }
