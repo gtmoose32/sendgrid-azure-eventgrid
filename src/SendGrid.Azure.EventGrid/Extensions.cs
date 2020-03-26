@@ -20,7 +20,7 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
 
         public static string GetPropertyStringValue(this JObject json, string propertyName)
         {
-            if (!json.TryGetValue(EventIdKey, StringComparison.OrdinalIgnoreCase, out var token))
+            if (!json.TryGetValue(propertyName, StringComparison.OrdinalIgnoreCase, out var token))
                 throw new InvalidOperationException(
                     string.Format(InvalidOperationExceptionMessageTemplate, propertyName));
 

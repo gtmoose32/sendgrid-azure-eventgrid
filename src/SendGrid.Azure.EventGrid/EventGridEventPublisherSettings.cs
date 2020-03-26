@@ -42,7 +42,7 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
             new EventGridEventPublisherSettings(DefaultBuildEventType, DefaultBuildEventSubject);
 
         private static string DefaultBuildEventType(JObject sendGridEvent) =>
-            $"Twilio.SendGrid.{sendGridEvent.GetPropertyStringValue(EventTypeKey)}";
+            $"twilio.sendgrid.{sendGridEvent.GetPropertyStringValue(EventTypeKey)}";
 
         private static string DefaultBuildEventSubject(JObject sendGridEvent) =>
             $"/sendgrid/messages/{sendGridEvent.GetPropertyStringValue(MessageIdKey)}";

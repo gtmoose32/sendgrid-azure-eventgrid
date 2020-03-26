@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <Version>3.0.0</Version>
+    <Version>3.0.1</Version>
     <Authors>Marty Mathis</Authors>
     <Company />
     <Description>A library for .NET that converts Twilio SendGrid web hook events into EventGrid events.</Description>
@@ -20,6 +20,8 @@ Changes in 3.0.0
 * Removed dependency on SendGrid.Webhooks package.
 * Modified EventGridEventPublisher ctor to use a Uri instead of a string for EventGrid topic.  The full EventGrid topic endpoint should be passed into this arugment.
 * Modified EventGridEventPublisherSettings ctor to accept different custom builder funcs based on JObject instead of SendGrid.Webhooks objects.
+Changes in 3.0.1
+* Bugfix for extracting properties in SendGrid properties incorrectly.  This affected building event type and subject of EventGridEvents.
     </PackageReleaseNotes>
     <Product>Moosesoft.SendGrid.Azure.EventGrid</Product>
     <AssemblyName>Moosesoft.SendGrid.Azure.EventGrid</AssemblyName>
