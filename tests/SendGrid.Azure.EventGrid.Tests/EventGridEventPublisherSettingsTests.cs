@@ -41,12 +41,10 @@ namespace SendGrid.Azure.EventGrid.Tests
             var json = new JObject();
 
             //Act
-            Action act = () => _sut.BuildEventSubject(json);
+            var result = _sut.BuildEventSubject(json);
 
             //Assert
-            act.Should()
-                .ThrowExactly<InvalidOperationException>()
-                .WithMessage("'sg_message_id' property cannot be extracted from the SendGrid event json.");
+            result.Should().Be("/sendgrid/messages/unknown-sg_message_id");
         }
     }
 }
