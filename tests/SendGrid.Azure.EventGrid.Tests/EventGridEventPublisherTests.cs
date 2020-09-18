@@ -11,6 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+// ReSharper disable AssignNullToNotNullAttribute
 
 namespace SendGrid.Azure.EventGrid.Tests
 {
@@ -35,8 +36,7 @@ namespace SendGrid.Azure.EventGrid.Tests
         public async Task PublishEventsAsync_Test()
         {
             //Arrange 
-            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "SendGridEvents.json");
-            var json = File.ReadAllText(path);
+            var json = await GetEventJsonFromFileAsync("SendGridEvents.json").ConfigureAwait(false);
 
             //Act
             await _sut.PublishEventsAsync(json).ConfigureAwait(false);
@@ -82,8 +82,7 @@ namespace SendGrid.Azure.EventGrid.Tests
         public async Task PublishEventsAsync_WithCustomBuilders_Test()
         {
             //Arrange 
-            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "SendGridEvents.json");
-            var json = File.ReadAllText(path);
+            var json = await GetEventJsonFromFileAsync("SendGridEvents.json").ConfigureAwait(false);
 
             var settings = new EventGridEventPublisherSettings(
                 j => $"/my/custom/subject/{j["sg_event_id"].Value<string>()}",
@@ -100,6 +99,12 @@ namespace SendGrid.Azure.EventGrid.Tests
                     Arg.Is(_topicUri.Host),
                     Arg.Is<IList<EventGridEvent>>(events => ValidatePublishedEvents(events, settings)))
                 .ConfigureAwait(false);
+        }
+
+        private static Task<string> GetEventJsonFromFileAsync(string fileName)
+        {
+            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), fileName);
+            return File.ReadAllTextAsync(path);
         }
 
         private static bool ValidatePublishedEvents(

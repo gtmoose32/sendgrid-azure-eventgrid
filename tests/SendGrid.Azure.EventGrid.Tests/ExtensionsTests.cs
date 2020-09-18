@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moosesoft.SendGrid.Azure.EventGrid;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SendGrid.Azure.EventGrid.Tests
@@ -12,18 +11,18 @@ namespace SendGrid.Azure.EventGrid.Tests
     public class ExtensionsTests
     {
         [TestMethod]
-        public void BuildEventType_ThrowsInvalidOperationException_Test()
+        public void BuildEventType_MissingEventId_MessageId_Test()
         {
             //Arrange
-            var json = new JObject();
+            var json = JObject.Parse(@"{ ""event"": ""delivered"" }");
 
             //Act
-            Action act = () => json.ToEventGridEvent(EventGridEventPublisherSettings.Default);
+            var result = json.ToEventGridEvent(EventGridEventPublisherSettings.Default);
 
-            //Assert
-            act.Should()
-                .ThrowExactly<InvalidOperationException>()
-                .WithMessage("'sg_event_id' property cannot be extracted from the SendGrid event json.");
+           //Assert
+           result.Should().NotBeNull();
+           result.EventType.Should().NotBeNullOrWhiteSpace();
+           result.Subject.Should().Be("/sendgrid/messages/unknown-sg_message_id");
         }
     }
 }
