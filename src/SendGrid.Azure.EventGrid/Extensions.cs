@@ -11,7 +11,9 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
 
         public static EventGridEvent ToEventGridEvent(this JObject @event, EventGridEventPublisherSettings settings) =>
             new EventGridEvent(
-                @event.GetPropertyStringValue(EventIdKey),
+                @event.TryGetValue(EventIdKey, StringComparison.OrdinalIgnoreCase, out var token) 
+                    ? token.Value<string>()
+                    : Guid.NewGuid().ToString(),
                 settings.BuildEventSubject(@event),
                 @event,
                 settings.BuildEventType(@event),
