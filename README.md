@@ -10,7 +10,7 @@ dotnet add package Moosesoft.SendGrid.Azure.EventGrid
 ```
 
 ## Azure Function Sample
-Working version of the sample code below is found (here)[https://github.com/gtmoose32/sendgrid-azure-eventgrid/tree/master/samples].  Note:  The Azure Event Grid topic configuration settings in the sample are fakes.  
+Working version of the sample code below is found [here](https://github.com/gtmoose32/sendgrid-azure-eventgrid/tree/master/samples).  Note:  The Azure Event Grid topic configuration settings in the sample are fakes.  
 
 ```C#
 public class SendGridEventHandler
