@@ -1,10 +1,10 @@
-﻿using Microsoft.Azure.EventGrid;
-using Microsoft.Azure.EventGrid.Models;
+﻿using Azure.Messaging.EventGrid;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,37 +16,48 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
     public class EventGridEventPublisher : IEventGridEventPublisher
     {
         private readonly EventGridEventPublisherSettings _settings;
-        private readonly IEventGridClient _eventGridClient;
-        private readonly Uri _topicUri;
+        private readonly EventGridPublisherClient _eventGridClient;
 
         /// <summary>
         /// Initialize a new instance of <see cref="EventGridEventPublisher"/>.
         /// </summary>
         /// <param name="eventGridClient">The client used to publish SendGrid events to an Azure EventGrid topic.</param>
-        /// <param name="topicUri">The Azure EventGrid topic endpoint where events will be published.</param>
         /// <param name="settings">Settings used to help build events.</param>
-        public EventGridEventPublisher(
-            IEventGridClient eventGridClient,
-            Uri topicUri,
-            EventGridEventPublisherSettings settings = null)
+        public EventGridEventPublisher(EventGridPublisherClient eventGridClient, EventGridEventPublisherSettings settings = null)
         {
             _eventGridClient = eventGridClient ?? throw new ArgumentNullException(nameof(eventGridClient));
-            _topicUri = topicUri ?? throw new ArgumentNullException(nameof(topicUri));
             _settings = settings ?? EventGridEventPublisherSettings.Default;
         }
 
         /// <inheritdoc cref="IEventGridEventPublisher"/>
-        public Task PublishEventsAsync(string sendGridEventsJson, CancellationToken cancellationToken = default)
+        public async Task PublishEventsAsync(string sendGridEventsJson, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(sendGridEventsJson))
-                throw new ArgumentException("Events json cannot be null, empty or whitespace.", nameof(sendGridEventsJson));
+                throw new ArgumentException("Cannot be null, empty or whitespace.", nameof(sendGridEventsJson));
 
             var events = JsonConvert.DeserializeObject<IEnumerable<JObject>>(sendGridEventsJson).ToArray();
-            if (!events.Any()) return Task.CompletedTask;
+            if (!events.Any()) return;
 
-            var eventGridEvents = events.Select(@event => @event.ToEventGridEvent(_settings)).ToList();
+            var eventGridEvents = events
+                .Select(ToEventGridEvent)
+                .ToArray();
 
-            return _eventGridClient.PublishEventsWithHttpMessagesAsync(_topicUri.Host, eventGridEvents, cancellationToken: cancellationToken);
+            await _eventGridClient.SendEventsAsync(eventGridEvents, cancellationToken: cancellationToken);
+        }
+
+        private const string EventIdKey = "sg_event_id";
+        private EventGridEvent ToEventGridEvent(JObject eventJson)
+        {
+            return new EventGridEvent(
+                _settings.BuildEventSubject(eventJson),
+                _settings.BuildEventType(eventJson),
+                "1", 
+                new BinaryData(Encoding.UTF8.GetBytes(eventJson.ToString())))
+            {
+                Id = eventJson.TryGetValue(EventIdKey, StringComparison.OrdinalIgnoreCase, out var token)
+                    ? token.Value<string>()
+                    : Guid.NewGuid().ToString()
+            };
         }
     }
 }

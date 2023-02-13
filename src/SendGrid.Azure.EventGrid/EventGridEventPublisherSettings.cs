@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.EventGrid.Models;
+﻿using Azure.Messaging.EventGrid;
 using Newtonsoft.Json.Linq;
 using System;
 
@@ -18,7 +18,7 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
         /// <param name="eventTypeBuilder">Custom func used to build EventGrid event type.</param>
         /// <param name="eventSubjectBuilder">Custom func used to build EventGrid event subject.</param>
         public EventGridEventPublisherSettings(
-            Func<JObject, string> eventTypeBuilder, 
+            Func<JObject, string> eventTypeBuilder,
             Func<JObject, string> eventSubjectBuilder)
         {
             BuildEventType = eventTypeBuilder ?? throw new ArgumentNullException(nameof(eventTypeBuilder));
@@ -38,19 +38,31 @@ namespace Moosesoft.SendGrid.Azure.EventGrid
         /// <summary>
         /// Initializes an instance of <see cref="EventGridEventPublisherSettings"/> with default settings.
         /// </summary>
-        public static EventGridEventPublisherSettings Default => 
-            new EventGridEventPublisherSettings(DefaultBuildEventType, DefaultBuildEventSubject);
+        public static EventGridEventPublisherSettings Default =>
+            new(DefaultBuildEventType, DefaultBuildEventSubject);
 
         private static string DefaultBuildEventType(JObject sendGridEvent) =>
-            $"twilio.sendgrid.{sendGridEvent.GetPropertyStringValue(EventTypeKey)}";
+            $"twilio.sendgrid.{GetPropertyStringValue(sendGridEvent, EventTypeKey)}";
 
         private static string DefaultBuildEventSubject(JObject sendGridEvent)
         {
             var messageId = $"unknown-{MessageIdKey}";
             if (sendGridEvent.TryGetValue(MessageIdKey, StringComparison.OrdinalIgnoreCase, out var token))
                 messageId = token.Value<string>();
-            
+
             return $"/sendgrid/messages/{messageId}";
+        }
+
+        private const string InvalidOperationExceptionMessageTemplate =
+            "'{0}' property cannot be extracted from the SendGrid event json.";
+
+        private static string GetPropertyStringValue(JObject json, string propertyName)
+        {
+            if (!json.TryGetValue(propertyName, StringComparison.OrdinalIgnoreCase, out var token))
+                throw new InvalidOperationException(
+                    string.Format(InvalidOperationExceptionMessageTemplate, propertyName));
+
+            return token.Value<string>();
         }
     }
 }
