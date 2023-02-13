@@ -4,6 +4,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Version>4.0.0-preview1</Version>
+    <AssemblyName>Moosesoft.SendGrid.Azure.EventGrid</AssemblyName>
+    <RootNamespace>Moosesoft.SendGrid.Azure.EventGrid</RootNamespace>
     <Authors>Marty Mathis</Authors>
     <Company />
     <Description>A library for .NET that converts Twilio SendGrid web hook events into EventGrid events.</Description>
@@ -14,21 +16,23 @@
     <PackageTags>azure eventgrid sendgrid twilio event email webhook topic</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile Condition="'$(Configuration)'=='Release'">true</GenerateDocumentationFile>
     <DocumentationFile Condition="'$(Configuration)'=='Release'">bin\Release\netstandard2.0\Moosesoft.SendGrid.Azure.EventGrid.xml</DocumentationFile>
     <PackageReleaseNotes>
-Changes in 3.0.0
-* Removed dependency on SendGrid.Webhooks package.
-* Modified EventGridEventPublisher ctor to use a Uri instead of a string for EventGrid topic.  The full EventGrid topic endpoint should be passed into this arugment.
-* Modified EventGridEventPublisherSettings ctor to accept different custom builder funcs based on JObject instead of SendGrid.Webhooks objects.
-Changes in 3.0.1
-* Bugfix for extracting properties in SendGrid properties incorrectly.  This affected building event type and subject of EventGridEvents.
-Changes in 3.0.2
-* SendGrid doesn't always send some properties that were previously required.  Code is now more defensive and forgiving in those cases and won't throw exceptions.
+      Changes in 4.0.0
+      * Breaking:  Updated to latest Azure EventGrid sdk package.  EventGridEventPublisher dependencies have been modified.
     </PackageReleaseNotes>
     <Product>Moosesoft.SendGrid.Azure.EventGrid</Product>
-    <AssemblyName>Moosesoft.SendGrid.Azure.EventGrid</AssemblyName>
-    <RootNamespace>Moosesoft.SendGrid.Azure.EventGrid</RootNamespace>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="readme.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Azure.Messaging.EventGrid" Version="4.13.0" />
