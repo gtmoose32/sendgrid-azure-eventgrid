@@ -8,14 +8,14 @@
     <RootNamespace>Moosesoft.SendGrid.Azure.EventGrid</RootNamespace>
     <Authors>Marty Mathis</Authors>
     <Company />
-    <Description>A library for .NET that converts Twilio SendGrid web hook events into EventGrid events.</Description>
+    <Description>A library for .NET that converts Twilio SendGrid delivery and engagement events into Azure Event Grid events.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/gtmoose32/sendgrid-azure-eventgrid</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/gtmoose32/sendgrid-azure-eventgrid</RepositoryUrl>
     <PackageTags>azure eventgrid sendgrid twilio event email webhook topic</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <GenerateDocumentationFile Condition="'$(Configuration)'=='Release'">true</GenerateDocumentationFile>
     <DocumentationFile Condition="'$(Configuration)'=='Release'">bin\Release\netstandard2.0\Moosesoft.SendGrid.Azure.EventGrid.xml</DocumentationFile>
     <PackageReleaseNotes>
