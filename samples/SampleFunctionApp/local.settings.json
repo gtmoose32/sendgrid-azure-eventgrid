@@ -1,0 +1,9 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "TopicEndpointUri": "https://egt-fake-test-topic.eastus-1.eventgrid.azure.net/api/events",
+    "TopicKey": "M4wX35COScVsDywFlfZ/6avMxCPRljsfoqr8CJqoT/g="
+  }
+}

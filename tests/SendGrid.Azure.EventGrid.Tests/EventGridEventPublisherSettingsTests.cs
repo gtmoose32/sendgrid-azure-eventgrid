@@ -1,50 +1,42 @@
-﻿using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moosesoft.SendGrid.Azure.EventGrid;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Diagnostics.CodeAnalysis;
+﻿namespace SendGrid.Azure.EventGrid.Tests;
 
-namespace SendGrid.Azure.EventGrid.Tests
+[ExcludeFromCodeCoverage]
+[TestClass]
+public class EventGridEventPublisherSettingsTests
 {
-    [ExcludeFromCodeCoverage]
-    [TestClass]
-    public class EventGridEventPublisherSettingsTests
+    private EventGridEventPublisherSettings _sut;
+
+    [TestInitialize]
+    public void Init()
     {
-        private EventGridEventPublisherSettings _sut;
+        _sut = EventGridEventPublisherSettings.Default;
+    }
 
-        [TestInitialize]
-        public void Init()
-        {
-            _sut = EventGridEventPublisherSettings.Default;
-        }
+    [TestMethod]
+    public void BuildEventType_ThrowsInvalidOperationException_Test()
+    {
+        //Arrange
+        var json = new JObject();
 
-        [TestMethod]
-        public void BuildEventType_ThrowsInvalidOperationException_Test()
-        {
-            //Arrange
-            var json = new JObject();
+        //Act
+        Action act = () => _sut.BuildEventType(json);
 
-            //Act
-            Action act = () => _sut.BuildEventType(json);
+        //Assert
+        act.Should()
+            .ThrowExactly<InvalidOperationException>()
+            .WithMessage("'event' property cannot be extracted from the SendGrid event json.");
+    }
 
-            //Assert
-            act.Should()
-                .ThrowExactly<InvalidOperationException>()
-                .WithMessage("'event' property cannot be extracted from the SendGrid event json.");
-        }
+    [TestMethod]
+    public void BuildEventSubject_ThrowsInvalidOperationException_Test()
+    {
+        //Arrange
+        var json = new JObject();
 
-        [TestMethod]
-        public void BuildEventSubject_ThrowsInvalidOperationException_Test()
-        {
-            //Arrange
-            var json = new JObject();
+        //Act
+        var result = _sut.BuildEventSubject(json);
 
-            //Act
-            var result = _sut.BuildEventSubject(json);
-
-            //Assert
-            result.Should().Be("/sendgrid/messages/unknown-sg_message_id");
-        }
+        //Assert
+        result.Should().Be("/sendgrid/messages/unknown-sg_message_id");
     }
 }

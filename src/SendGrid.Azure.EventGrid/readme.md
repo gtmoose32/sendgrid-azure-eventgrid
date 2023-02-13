@@ -1,0 +1,2 @@
+﻿## What is it?
+A library for .NET that converts Twilio [SendGrid events for web hooks](https://sendgrid.com/docs/for-developers/tracking-events/event/) into [Azure EventGrid](https://azure.microsoft.com/en-us/services/event-grid/) events and publishes them to a topic.
