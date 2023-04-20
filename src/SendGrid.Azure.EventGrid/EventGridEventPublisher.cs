@@ -1,17 +1,7 @@
-﻿using Azure.Messaging.EventGrid;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Moosesoft.SendGrid.Azure.EventGrid;
+﻿namespace Moosesoft.SendGrid.Azure.EventGrid;
 
 /// <summary>
-/// Reads SendGrid events json posted to a webhook, converts them to <see cref="EventGridEvent"/> and publishes those events to a topic.
+/// Reads SendGrid events json, converts them to <see cref="EventGridEvent"/> and publishes those events to a topic.
 /// </summary>
 public class EventGridEventPublisher : IEventGridEventPublisher
 {
@@ -29,7 +19,7 @@ public class EventGridEventPublisher : IEventGridEventPublisher
         _settings = settings ?? EventGridEventPublisherSettings.Default;
     }
 
-    /// <inheritdoc cref="IEventGridEventPublisher"/>
+    /// <inheritdoc />
     public async Task PublishEventsAsync(string sendGridEventsJson, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(sendGridEventsJson))
@@ -43,6 +33,17 @@ public class EventGridEventPublisher : IEventGridEventPublisher
             .ToArray();
 
         await _eventGridClient.SendEventsAsync(eventGridEvents, cancellationToken: cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task PublishEventsAsync(Stream sendGridEventsStream, CancellationToken cancellationToken = default)
+    {
+        if (sendGridEventsStream == null) throw new ArgumentNullException(nameof(sendGridEventsStream));
+
+        using var reader = new StreamReader(sendGridEventsStream, Encoding.UTF8);
+        var json = await reader.ReadToEndAsync().ConfigureAwait(false);
+
+        await PublishEventsAsync(json, cancellationToken).ConfigureAwait(false);
     }
 
     private const string EventIdKey = "sg_event_id";

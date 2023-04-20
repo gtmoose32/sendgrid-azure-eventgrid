@@ -1,8 +1,4 @@
-﻿using Azure.Messaging.EventGrid;
-using Newtonsoft.Json.Linq;
-using System;
-
-namespace Moosesoft.SendGrid.Azure.EventGrid;
+﻿namespace Moosesoft.SendGrid.Azure.EventGrid;
 
 /// <summary>
 /// Provides settings to configure instances of <see cref="EventGridEventPublisher"/>.
