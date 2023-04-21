@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using System.Text;
-
+// ReSharper disable ExpressionIsAlwaysNull
 // ReSharper disable AssignNullToNotNullAttribute
 
 namespace SendGrid.Azure.EventGrid.Tests;
@@ -21,7 +21,7 @@ public class EventGridEventPublisherTests
     }
 
     [TestMethod]
-    public async Task PublishEventsAsync_Test()
+    public async Task PublishEventsAsync_JsonString_Test()
     {
         //Arrange 
         var json = await GetEventJsonFromFileAsync("SendGridEvents.json").ConfigureAwait(false);
@@ -36,15 +36,54 @@ public class EventGridEventPublisherTests
     }
 
     [TestMethod]
-    public async Task PublishEventsAsync_ReceivedNullJson_Test()
+    public async Task PublishEventsAsync_JsonStream_Test()
     {
+        //Arrange 
+        var json = await GetEventJsonFromFileAsync("SendGridEvents.json").ConfigureAwait(false);
+        var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
+        
         //Act
-        Func<Task> act = () => _sut.PublishEventsAsync(null);
+        await _sut.PublishEventsAsync(stream).ConfigureAwait(false);
+
+        //Assert
+        await _eventGridClient.Received(1)
+            .SendEventsAsync(Arg.Is<IEnumerable<EventGridEvent>>(events => ValidatePublishedEvents(events, _defaultSettings)), Arg.Is(CancellationToken.None))
+            .ConfigureAwait(false);
+    }
+
+    [TestMethod]
+    public async Task PublishEventsAsync_ReceivedNullJsonString_Test()
+    {
+        //Arrange
+        string json = null;
+
+        //Act
+        Func<Task> act = () => _sut.PublishEventsAsync(json);
 
         //Assert
         (await act.Should()
-            .ThrowExactlyAsync<ArgumentException>())
+            .ThrowExactlyAsync<ArgumentException>()
+            .ConfigureAwait(false))
             .WithMessage("Cannot be null, empty or whitespace. (Parameter 'sendGridEventsJson')");
+
+        await _eventGridClient.DidNotReceiveWithAnyArgs()
+            .SendEventsAsync(Arg.Any<IEnumerable<EventGridEvent>>(), Arg.Any<CancellationToken>())
+            .ConfigureAwait(false);
+    }
+
+    [TestMethod]
+    public async Task PublishEventsAsync_ReceivedNullJsonStream_Test()
+    {
+        //Arrange
+        Stream json = null;
+
+        //Act
+        Func<Task> act = () => _sut.PublishEventsAsync(json);
+
+        //Assert
+        await act.Should()
+                .ThrowExactlyAsync<ArgumentNullException>()
+                .ConfigureAwait(false);
 
         await _eventGridClient.DidNotReceiveWithAnyArgs()
             .SendEventsAsync(Arg.Any<IEnumerable<EventGridEvent>>(), Arg.Any<CancellationToken>())

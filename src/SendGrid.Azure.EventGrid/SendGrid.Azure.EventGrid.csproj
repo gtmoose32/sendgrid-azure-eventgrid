@@ -3,7 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <Version>4.0.0-preview1</Version>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <Version>4.0.0</Version>
     <AssemblyName>Moosesoft.SendGrid.Azure.EventGrid</AssemblyName>
     <RootNamespace>Moosesoft.SendGrid.Azure.EventGrid</RootNamespace>
     <Authors>Marty Mathis</Authors>
@@ -31,12 +33,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="readme.md" Pack="true" PackagePath="\"/>
+    <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Messaging.EventGrid" Version="4.13.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Azure.Messaging.EventGrid" Version="4.15.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
 </Project>
